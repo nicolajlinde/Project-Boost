@@ -6,10 +6,14 @@ using UnityEngine.PlayerLoop;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float thrustSpeed = 10f;
+    [SerializeField] private float rocketShipAngle = 5f;
+    Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -19,23 +23,30 @@ public class Movement : MonoBehaviour
         ProcessRotation();
     }
 
-    void ProcessThrust()
+    private void ProcessThrust()
     {
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W))
         {
-            Debug.Log("Pressed Space - Thrusting!");
+            rb.AddRelativeForce(Vector3.up * thrustSpeed * Time.deltaTime);
         }
     }
 
-    void ProcessRotation()
+    private void ProcessRotation()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            Debug.Log("Pressed A - Turning Left!");
+            ApplyRotation(rocketShipAngle);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            Debug.Log("Pressed D - Turning Right!");
+            ApplyRotation(-rocketShipAngle);
         }
+    }
+
+    private void ApplyRotation(float rotationThisFrame)
+    {
+        rb.freezeRotation = true; // Freezing rotation so we can manually rotate.
+        transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime);
+        rb.freezeRotation = false; // Unfreezing rotation so the system can take over.
     }
 }
