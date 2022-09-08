@@ -5,15 +5,21 @@ using UnityEngine.PlayerLoop;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float thrustSpeed = 10f;
-    [SerializeField] private float rocketShipAngle = 5f;
-    Rigidbody rb;
+    // [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] float thrustSpeed = 10f;
+    [SerializeField] float rocketShipAngle = 5f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] ParticleSystem thrusterLeft;
+    [SerializeField] ParticleSystem thrusterRight;
+    [SerializeField] ParticleSystem rocketJet;
 
-    // Start is called before the first frame update
+    Rigidbody rb;
+    AudioSource audioSource;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -28,6 +34,19 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W))
         {
             rb.AddRelativeForce(Vector3.up * thrustSpeed * Time.deltaTime);
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(mainEngine);
+            }
+            if (!rocketJet.isPlaying)
+            {
+                rocketJet.Play();
+            }
+        }
+        else
+        {
+            audioSource.Stop();
+            rocketJet.Stop();
         }
     }
 
@@ -35,11 +54,24 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A))
         {
+            if (!thrusterRight.isPlaying)
+            {
+                thrusterRight.Play();
+            }
             ApplyRotation(rocketShipAngle);
         }
         else if (Input.GetKey(KeyCode.D))
         {
+            if (!thrusterLeft.isPlaying)
+            {
+                thrusterLeft.Play();
+            }
             ApplyRotation(-rocketShipAngle);
+        }
+        else
+        {
+            thrusterLeft.Stop();
+            thrusterRight.Stop();
         }
     }
 
