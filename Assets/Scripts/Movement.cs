@@ -15,6 +15,7 @@ public class Movement : MonoBehaviour
 
     Rigidbody rb;
     AudioSource audioSource;
+    
 
     void Start()
     {
@@ -33,20 +34,11 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W))
         {
-            rb.AddRelativeForce(Vector3.up * thrustSpeed * Time.deltaTime);
-            if (!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(mainEngine);
-            }
-            if (!rocketJet.isPlaying)
-            {
-                rocketJet.Play();
-            }
+            StartThrusting();
         }
         else
         {
-            audioSource.Stop();
-            rocketJet.Stop();
+            StopThrusting();
         }
     }
 
@@ -54,26 +46,63 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A))
         {
-            if (!thrusterRight.isPlaying)
-            {
-                thrusterRight.Play();
-            }
-            ApplyRotation(rocketShipAngle);
+            RotateRight();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            if (!thrusterLeft.isPlaying)
-            {
-                thrusterLeft.Play();
-            }
-            ApplyRotation(-rocketShipAngle);
+            RotateLeft();
         }
         else
         {
-            thrusterLeft.Stop();
-            thrusterRight.Stop();
+            StopRotating();
         }
     }
+
+    private void StartThrusting()
+    {
+        rb.AddRelativeForce(Vector3.up * thrustSpeed * Time.deltaTime);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+        if (!rocketJet.isPlaying)
+        {
+            rocketJet.Play();
+        }
+    }
+
+    private void StopThrusting()
+    {
+        audioSource.Stop();
+        rocketJet.Stop();
+    }
+
+
+    private void RotateLeft()
+    {
+        if (!thrusterLeft.isPlaying)
+        {
+            thrusterLeft.Play();
+        }
+        ApplyRotation(-rocketShipAngle);
+    }
+
+    private void RotateRight()
+    {
+        if (!thrusterRight.isPlaying)
+        {
+            thrusterRight.Play();
+        }
+        ApplyRotation(rocketShipAngle);
+    }
+
+
+    private void StopRotating()
+    {
+        thrusterLeft.Stop();
+        thrusterRight.Stop();
+    }
+
 
     private void ApplyRotation(float rotationThisFrame)
     {

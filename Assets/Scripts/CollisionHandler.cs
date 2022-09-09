@@ -11,15 +11,21 @@ public class CollisionHandler : MonoBehaviour
 
     AudioSource audioSource;
     bool isTransitioning = false;
+    bool collisionDisabled;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
     }
 
+    void Update()
+    {
+        DebugOrCheatKeys();
+    }
+
     void OnCollisionEnter(Collision other)
     {
-        if (isTransitioning) { return; }
+        if (isTransitioning || collisionDisabled) { return; }
 
         switch (other.gameObject.tag)
         {
@@ -34,6 +40,24 @@ public class CollisionHandler : MonoBehaviour
                 StartCrashSequence();
                 Debug.Log("I bumped into something.");
                 break;
+        }
+    }
+
+    private void DebugOrCheatKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ReloadLevel();
         }
     }
 
@@ -65,7 +89,7 @@ public class CollisionHandler : MonoBehaviour
         SceneManager.LoadScene(currentSceneIndex);
     }
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     {
         int loadNextScene = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = loadNextScene + 1;
